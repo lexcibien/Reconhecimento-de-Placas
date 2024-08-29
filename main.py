@@ -31,13 +31,13 @@ print("Total de Classes:", len(pastas))
 noOfClasses = len(pastas)
 
 for pt in range(0, len(pastas)):
-    arquivos = os.listdir(path + "/" + str(count))
-    for arq in arquivos:
-        curImg = cv2.imread(path + "/" + str(count) + "/" + arq)
-        images.append(curImg)
-        classNo.append(count)
+  arquivos = os.listdir(path + "/" + str(count))
+  for arq in arquivos:
+    curImg = cv2.imread(path + "/" + str(count) + "/" + arq)
+    images.append(curImg)
+    classNo.append(count)
 
-    count += 1
+  count += 1
 
 images = np.array(images)
 classNo = np.array(classNo)
@@ -55,18 +55,18 @@ X_train, X_validation, y_train, y_validation = train_test_split(X_train, y_train
 ## Funções do pré-processamento das Imagens
 
 def grayscale(img):
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return img
+  img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+  return img
 
 def equalize(img):
-    img = cv2.equalizeHist(img)
-    return img
+  img = cv2.equalizeHist(img)
+  return img
 
 def preprocessing(img):
-    img = grayscale(img)  # Converter em Gray
-    img = equalize(img)  # Padronizar a Luminosidade das imagens
-    img = img / 255  # normalizar valores para 0 e 1 em vez de 0 e 255
-    return img
+  img = grayscale(img)  # Converter em Gray
+  img = equalize(img)  # Padronizar a Luminosidade das imagens
+  img = img / 255  # normalizar valores para 0 e 1 em vez de 0 e 255
+  return img
 
 ## Pré-processar imagens
 X_train = np.array(list(map(preprocessing, X_train)))
@@ -95,21 +95,21 @@ y_test = tf.keras.utils.to_categorical(y_test, noOfClasses)
 class_names = ['20km/h', '30km/h', '50km/h', '60km/h', '70km/h', '80km/h', '100km/h', '120km/h', 'Pare']
 ## Criar Modelo
 def myModel():
-    model = Sequential([
-    keras.layers.Conv2D(32, kernel_size=(5, 5), activation='relu', input_shape=(32, 32, 1)),
-    keras.layers.MaxPooling2D(2, 2),
+  model = Sequential([
+  keras.layers.Conv2D(32, kernel_size=(5, 5), activation='relu', input_shape=(32, 32, 1)),
+  keras.layers.MaxPooling2D(2, 2),
 
-    keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu'),
-    keras.layers.MaxPooling2D(pool_size=(2, 2)),
-    keras.layers.Dropout(0.5),
+  keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu'),
+  keras.layers.MaxPooling2D(pool_size=(2, 2)),
+  keras.layers.Dropout(0.5),
 
-    keras.layers.Flatten(),
-    keras.layers.Dense(128, activation='relu'),
-    keras.layers.Dense(noOfClasses, activation='softmax'),
- ])
-    # COMPILE MODEL
-    model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    return model
+  keras.layers.Flatten(),
+  keras.layers.Dense(128, activation='relu'),
+  keras.layers.Dense(noOfClasses, activation='softmax'),
+  ])
+  # COMPILE MODEL
+  model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
+  return model
 
 
 ## Treinamento

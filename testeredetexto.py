@@ -20,41 +20,41 @@ imageDimesions = (32, 32, 3)
 
 # Funções de pré-processamento e carregamento de imagens de texto
 def grayscale(img):
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return img
+  img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+  return img
 
 def equalize(img):
-    img = cv2.equalizeHist(img)
-    return img
+  img = cv2.equalizeHist(img)
+  return img
 
 def preprocessing(img):
-    img = grayscale(img)
-    img = equalize(img)
-    img = img / 255
-    return img
+  img = grayscale(img)
+  img = equalize(img)
+  img = img / 255
+  return img
 
 def load_and_process_text(path):
-    text_images = []
-    text_classNo = []
+  text_images = []
+  text_classNo = []
 
-    pastas = os.listdir(path)
-    print("Total de Classes de Texto:", len(pastas))
-    noOfClasses = len(pastas)
+  pastas = os.listdir(path)
+  print("Total de Classes de Texto:", len(pastas))
+  noOfClasses = len(pastas)
 
-    for pt in range(0, len(pastas)):
-        arquivos = os.listdir(path + "/" + str(pt))
-        for arq in arquivos:
-            curTextImg = cv2.imread(path + "/" + str(pt) + "/" + arq, cv2.IMREAD_GRAYSCALE)
-            text_images.append(curTextImg)
-            text_classNo.append(pt)
+  for pt in range(0, len(pastas)):
+    arquivos = os.listdir(path + "/" + str(pt))
+    for arq in arquivos:
+      curTextImg = cv2.imread(path + "/" + str(pt) + "/" + arq, cv2.IMREAD_GRAYSCALE)
+      text_images.append(curTextImg)
+      text_classNo.append(pt)
 
-    text_images = np.array(text_images)
-    text_classNo = np.array(text_classNo)
+  text_images = np.array(text_images)
+  text_classNo = np.array(text_classNo)
 
-    text_images = np.array(list(map(preprocessing, text_images)))
-    text_images = text_images.reshape(text_images.shape[0], text_images.shape[1], text_images.shape[2], 1)
+  text_images = np.array(list(map(preprocessing, text_images)))
+  text_images = text_images.reshape(text_images.shape[0], text_images.shape[1], text_images.shape[2], 1)
 
-    return text_images, text_classNo
+  return text_images, text_classNo
 
 # Carregamento e divisão das imagens de texto
 X_text, y_text = load_and_process_text(path_text)
@@ -72,13 +72,13 @@ print("Total de Classes:", len(pastas))
 noOfClasses = len(pastas)
 
 for pt in range(0, len(pastas)):
-    arquivos = os.listdir(path_visual + "/" + str(count))
-    for arq in arquivos:
-        curImg = cv2.imread(path_visual + "/" + str(count) + "/" + arq)
-        images.append(curImg)
-        classNo.append(count)
+  arquivos = os.listdir(path_visual + "/" + str(count))
+  for arq in arquivos:
+    curImg = cv2.imread(path_visual + "/" + str(count) + "/" + arq)
+    images.append(curImg)
+    classNo.append(count)
 
-    count += 1
+  count += 1
 
 images = np.array(images)
 classNo = np.array(classNo)
@@ -98,11 +98,11 @@ X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
 
 # Aumento de imagens
 dataGen = ImageDataGenerator(
-    width_shift_range=0.1,
-    height_shift_range=0.1,
-    zoom_range=0.2,
-    shear_range=0.1,
-    rotation_range=10
+  width_shift_range=0.1,
+  height_shift_range=0.1,
+  zoom_range=0.2,
+  shear_range=0.1,
+  rotation_range=10
 )
 dataGen.fit(X_train)
 batches = dataGen.flow(X_train, y_train, batch_size=20)
@@ -115,34 +115,34 @@ y_test = tf.keras.utils.to_categorical(y_test, noOfClasses)
 
 # Criação do modelo
 def myModel():
-    input_visual = Input(shape=(32, 32, 1), name='input_visual')
-    conv_visual = keras.layers.Conv2D(32, kernel_size=(5, 5), activation='relu')(input_visual)
-    maxpool_visual = keras.layers.MaxPooling2D(2, 2)(conv_visual)
-    flatten_visual = Flatten()(maxpool_visual)
+  input_visual = Input(shape=(32, 32, 1), name='input_visual')
+  conv_visual = keras.layers.Conv2D(32, kernel_size=(5, 5), activation='relu')(input_visual)
+  maxpool_visual = keras.layers.MaxPooling2D(2, 2)(conv_visual)
+  flatten_visual = Flatten()(maxpool_visual)
 
-    input_text = Input(shape=(32, 32, 1), name='input_text')
-    conv_text = keras.layers.Conv2D(32, kernel_size=(5, 5), activation='relu')(input_text)
-    maxpool_text = keras.layers.MaxPooling2D(2, 2)(conv_text)
-    flatten_text = Flatten()(maxpool_text)
+  input_text = Input(shape=(32, 32, 1), name='input_text')
+  conv_text = keras.layers.Conv2D(32, kernel_size=(5, 5), activation='relu')(input_text)
+  maxpool_text = keras.layers.MaxPooling2D(2, 2)(conv_text)
+  flatten_text = Flatten()(maxpool_text)
 
-    concatenated = concatenate([flatten_visual, flatten_text])
+  concatenated = concatenate([flatten_visual, flatten_text])
 
-    dense1 = Dense(128, activation='relu')(concatenated)
-    output = Dense(noOfClasses, activation='softmax')(dense1)
+  dense1 = Dense(128, activation='relu')(concatenated)
+  output = Dense(noOfClasses, activation='softmax')(dense1)
 
-    model = Model(inputs=[input_visual, input_text], outputs=output)
+  model = Model(inputs=[input_visual, input_text], outputs=output)
 
-    model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    return model
+  model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
+  return model
 
 # Treinamento do modelo
 model = myModel()
 print(model.summary())
 
 history = model.fit(
-    [X_train, X_text_train], y_train,
-    validation_data=([X_validation, X_text_validation], y_validation),
-    steps_per_epoch=steps_per_epoch_val, epochs=epochs_val, shuffle=1
+  [X_train, X_text_train], y_train,
+  validation_data=([X_validation, X_text_validation], y_validation),
+  steps_per_epoch=steps_per_epoch_val, epochs=epochs_val, shuffle=1
 )
 
 # Histórico de treinamento
