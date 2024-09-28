@@ -1,4 +1,6 @@
-## REDE CNN
+#
+# Programação usada para aprender placas
+#
 
 import matplotlib.pyplot as plt
 import tensorflow as tf
