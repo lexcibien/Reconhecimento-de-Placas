@@ -20,18 +20,18 @@ imageDimesions = (32, 32, 3)
 
 # Funções de pré-processamento e carregamento de imagens de texto
 def grayscale(img):
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return img
+    grayImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return grayImg
 
 def equalize(img):
-    img = cv2.equalizeHist(img)
-    return img
+    eqImg = cv2.equalizeHist(img)
+    return eqImg
 
 def preprocessing(img):
-    img = grayscale(img)
-    img = equalize(img)
-    img = img / 255
-    return img
+    grayImg = grayscale(img)
+    eqImg = equalize(grayImg)
+    processedImg = eqImg / 255
+    return processedImg
 
 def load_and_process_text(path):
     text_images = []

@@ -54,19 +54,19 @@ X_train, X_validation, y_train, y_validation = train_test_split(X_train, y_train
 
 ## Funções do pré-processamento das Imagens
 
-def grayscale(img):
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return img
+def grayscale(imgToGray):
+    grayImg = cv2.cvtColor(imgToGray, cv2.COLOR_BGR2GRAY)
+    return grayImg
 
-def equalize(img):
-    img = cv2.equalizeHist(img)
-    return img
+def equalize(imgToEq):
+    eqImg = cv2.equalizeHist(imgToEq)
+    return eqImg
 
-def preprocessing(img):
-    img = grayscale(img)  # Converter em Gray
-    img = equalize(img)  # Padronizar a Luminosidade das imagens
-    img = img / 255  # normalizar valores para 0 e 1 em vez de 0 e 255
-    return img
+def preprocessing(imgToPreprocess):
+    grayImg = grayscale(imgToPreprocess)
+    eqImg = equalize(grayImg)
+    processedImg = eqImg / 255
+    return processedImg
 
 ## Pré-processar imagens
 X_train = np.array(list(map(preprocessing, X_train)))

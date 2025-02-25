@@ -8,48 +8,50 @@ cap = cv2.VideoCapture(0)
 
 model = load_model('modelo.h5')
 
-def grayscale(img):
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return img
+def grayscale(imgToGray):
+    grayImg = cv2.cvtColor(imgToGray, cv2.COLOR_BGR2GRAY)
+    return grayImg
 
-def equalize(img):
-    img = cv2.equalizeHist(img)
-    return img
+def equalize(imgToEq):
+    eqImg = cv2.equalizeHist(imgToEq)
+    return eqImg
 
-def preprocessing(img):
-    img = grayscale(img)
-    img = equalize(img)
-    img = img / 255
-    return img
+def preprocessing(imgToPreprocess):
+    grayImg = grayscale(imgToPreprocess)
+    eqImg = equalize(grayImg)
+    processedImg = eqImg / 255
+    return processedImg
 
 def getClassName(classNo):
     if classNo == 0:
         return '20 KM/H'
     elif classNo == 1:
         return 'PARE'
+    else:
+        return 'NÃO IDENTIFICADO'
 
 # Certifique-se de configurar o caminho para o executável Tesseract se não estiver no PATH
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 
 # Função para detectar texto usando Tesseract OCR
-def detect_text(image):
+def detect_text(imgToDetect):
     # Converta a imagem para o formato BGR
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    img = Image.fromarray(image)
-    text = pytesseract.image_to_string(img)
+    convertColorImg = cv2.cvtColor(imgToDetect, cv2.COLOR_BGR2RGB)
+    arrayImg = Image.fromarray(convertColorImg)
+    text = pytesseract.image_to_string(arrayImg)
     return text
 
 while True:
     success, imgOriginal = cap.read()
 
     # Converta o quadro para tons de cinza
-    gray = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2GRAY)
+    grayImg = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2GRAY)
 
     # Aplique um desfoque para remover ruído
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    blurredImg = cv2.GaussianBlur(grayImg, (5, 5), 0)
 
     # Use o detector de bordas Canny para encontrar contornos
-    edges = cv2.Canny(blurred, 50, 150)
+    edges = cv2.Canny(blurredImg, 50, 150)
 
     # Encontre contornos na imagem
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -83,8 +85,8 @@ while True:
                 rectangle_region_resized = cv2.resize(rectangle_region, (32, 32))
 
                 # Pré-processamento da imagem
-                img = preprocessing(rectangle_region_resized)
-                img = img.reshape(1, 32, 32, 1)
+                preprocessedImg = preprocessing(rectangle_region_resized)
+                reshapedImg = preprocessedImg.reshape(1, 32, 32, 1)
 
                 try:
                     # Chama a função para detectar texto na placa de trânsito
@@ -93,7 +95,7 @@ while True:
                     print("Texto na placa de trânsito:", resultado)
 
                     # Faça a previsão usando o modelo
-                    predictions = model.predict(img)
+                    predictions = model.predict(reshapedImg)
                     indexVal = np.argmax(predictions)
                     probabilityValue = np.amax(predictions)
                     print(indexVal, probabilityValue)

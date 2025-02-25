@@ -24,25 +24,27 @@ def capture_photo(timestamp: str):
   cap.capture(filename)
   print(f"Foto salva como {filename}")
 
-def grayscale(img):
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return img
+def grayscale(imgToGray):
+    grayImg = cv2.cvtColor(imgToGray, cv2.COLOR_BGR2GRAY)
+    return grayImg
 
-def equalize(img):
-    img = cv2.equalizeHist(img)
-    return img
+def equalize(imgToEq):
+    eqImg = cv2.equalizeHist(imgToEq)
+    return eqImg
 
-def preprocessing(img):
-    img = grayscale(img)
-    img = equalize(img)
-    img = img / 255
-    return img
+def preprocessing(imgToPreprocess):
+    grayImg = grayscale(imgToPreprocess)
+    eqImg = equalize(grayImg)
+    processedImg = eqImg / 255
+    return processedImg
 
 def getClassName(classNo):
     if classNo == 0:
-        return '20km/h'
-    elif classNo == 8:
+        return '20 KM/H'
+    elif classNo == 1:
         return 'PARE'
+    else:
+        return 'NÃO IDENTIFICADO'
 
 while True:
     imgOriginal = cap.capture_array()
