@@ -20,9 +20,9 @@ indexVal = 0
 prev_time = 0
 
 def capture_photo(timestamp: str):
-  filename = f"Test_{timestamp}.jpg"
-  cap.capture(filename)
-  print(f"Foto salva como {filename}")
+    filename = f"Test_{timestamp}.jpg"
+    cap.capture(filename)
+    print(f"Foto salva como {filename}")
 
 def grayscale(imgToGray):
     grayImg = cv2.cvtColor(imgToGray, cv2.COLOR_BGR2GRAY)
