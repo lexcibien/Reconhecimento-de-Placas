@@ -99,7 +99,8 @@ while True:
     cv2.putText(imgOriginal, f'FPS: {fps:.2f}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
     cv2.imshow("Deteccao de placas", imgOriginal)
-    cv2.waitKey(1)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+      break
 
 # Liberação de recursos
 cap.release()
